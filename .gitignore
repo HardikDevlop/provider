@@ -1,0 +1,19 @@
+.env
+node_modules/
+*.env
+*.log
+dist/
+build/
+coverage/
+
+# Node / dependencies
+node_modules/
+dist/
+build/
+
+# Env files
+.env
+*.env
+admin/.env
+server/.env
+*/.env
