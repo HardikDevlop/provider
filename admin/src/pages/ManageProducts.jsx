@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { PageLayout, PageSkeletonHeader, PageSkeletonCards } from "../Components/PageLayout";
+import { FiPackage, FiPlusCircle, FiEdit2, FiTrash2, FiChevronDown, FiChevronUp } from "react-icons/fi";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -8,54 +10,43 @@ function EditProductModal({ product, onClose, onSave }) {
   const [form, setForm] = useState({
     name: product.name,
     visitingPrice: product.visitingPrice,
-    images: [], // new files to upload
+    images: [],
   });
   const [existingImages, setExistingImages] = useState(Array.isArray(product.images) ? [...product.images] : []);
   const [subServices, setSubServices] = useState(
     Array.isArray(product.subServices) && product.subServices.length > 0
-      ? product.subServices.map(sub => ({
+      ? product.subServices.map((sub) => ({
           name: sub.name,
           price: sub.price,
-          existingImage: sub.image, // Keep existing image
-          image: null, // New image file
-          imagePreview: null // Preview for new image
+          existingImage: sub.image,
+          image: null,
+          imagePreview: null,
         }))
       : [{ name: "", price: "", existingImage: null, image: null, imagePreview: null }]
   );
 
-  // Handle text/number input change
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Handle new image uploads
   const handleImageChange = (e) => {
     const files = Array.from(e.target.files);
     if (files.length > 5) {
       alert("Maximum 5 images allowed");
       return;
     }
-    setForm((prev) => ({
-      ...prev,
-      images: files,
-    }));
+    setForm((prev) => ({ ...prev, images: files }));
   };
 
-  // Remove an existing image from the product
   const handleRemoveExistingImage = (idx) => {
     setExistingImages((prev) => prev.filter((_, i) => i !== idx));
   };
 
-  // Remove a new image from the preview list
   const handleRemoveNewImage = (idx) => {
-    setForm((prev) => ({
-      ...prev,
-      images: prev.images.filter((_, i) => i !== idx),
-    }));
+    setForm((prev) => ({ ...prev, images: prev.images.filter((_, i) => i !== idx) }));
   };
 
-  // Subservice change
   const handleSubChange = (index, e) => {
     const { name, value } = e.target;
     const updated = [...subServices];
@@ -63,7 +54,6 @@ function EditProductModal({ product, onClose, onSave }) {
     setSubServices(updated);
   };
 
-  // Handle subservice image change
   const handleSubImageChange = (index, e) => {
     const file = e.target.files[0];
     if (file) {
@@ -74,23 +64,19 @@ function EditProductModal({ product, onClose, onSave }) {
     }
   };
 
-  // Remove existing subservice image
   const handleRemoveSubServiceImage = (index) => {
     const updated = [...subServices];
     updated[index].existingImage = null;
     setSubServices(updated);
   };
 
-  // Add/remove subservices
   const addSubService = () => {
-    setSubServices([...subServices, { 
-      name: "", 
-      price: "", 
-      existingImage: null,
-      image: null, 
-      imagePreview: null 
-    }]);
+    setSubServices([
+      ...subServices,
+      { name: "", price: "", existingImage: null, image: null, imagePreview: null },
+    ]);
   };
+
   const removeSubService = (index) => {
     if (subServices.length === 1) return;
     const updated = [...subServices];
@@ -98,140 +84,136 @@ function EditProductModal({ product, onClose, onSave }) {
     setSubServices(updated);
   };
 
-  // Submit handler
   const handleSubmit = async (e) => {
     e.preventDefault();
-
     const formData = new FormData();
-    // Add text fields
     formData.append("name", form.name);
     formData.append("visitingPrice", form.visitingPrice);
-    
-    // Add main service images
-    form.images.forEach((file) => {
-      formData.append("images", file);
-    });
-    
-    // Always append existingImages (as JSON), even if empty
+    form.images.forEach((file) => formData.append("images", file));
     formData.append("existingImages", JSON.stringify(existingImages || []));
-    
-    // Subservices with proper image handling
-    const subServicesData = subServices.map(sub => ({
+    const subServicesData = subServices.map((sub) => ({
       name: sub.name,
       price: sub.price,
-      image: sub.image ? sub.image.name : (sub.existingImage || null) // Send the original file name if uploading
+      image: sub.image ? sub.image.name : sub.existingImage || null,
     }));
     formData.append("subServices", JSON.stringify(subServicesData));
-
-    // Add subservice images (only new ones)
-    subServices.forEach((sub, index) => {
-      if (sub.image && sub.image instanceof File) {
-        formData.append(`subServiceImages`, sub.image);
-      }
+    subServices.forEach((sub) => {
+      if (sub.image && sub.image instanceof File) formData.append("subServiceImages", sub.image);
     });
 
     try {
-      console.log("📤 Sending update data:", {
-        name: form.name,
-        visitingPrice: form.visitingPrice,
-        imagesCount: form.images.length,
-        existingImagesCount: existingImages.length,
-        subServicesCount: subServices.length
+      await axios.put(`${BASE_URL}/api/products/${product._id}`, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
       });
-      
-      const response = await axios.put(
-        `${BASE_URL}/api/products/${product._id}`,
-        formData,
-        {
-          headers: { "Content-Type": "multipart/form-data" },
-        }
-      );
-      
-      console.log("✅ Update response:", response.data);
-      alert("✅ Product updated!");
-      onSave(); // refresh parent
+      alert("Product updated!");
+      onSave();
     } catch (err) {
-      console.error("❌ Failed to update product:", err);
-      const errorMessage = err.response?.data?.message || err.response?.data?.error || err.message || "Unknown error occurred";
-      alert(`❌ Failed to update product: ${errorMessage}`);
+      console.error("Failed to update product:", err);
+      alert(err.response?.data?.message || "Failed to update product");
     }
   };
 
-  // Modal UI
   return (
-    <div className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center">
-      <div className="bg-white rounded-lg max-w-2xl w-full p-6 overflow-y-auto max-h-[95vh] shadow-lg">
-        <h2 className="text-xl font-bold mb-3">Edit Service</h2>
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {/* Name, Visiting Price */}
+    <div className="fixed inset-0 bg-slate-900/50 backdrop-blur-sm z-50 flex items-center justify-center p-4 animate-fade-in">
+      <div className="bg-dashboard-card rounded-2xl max-w-2xl w-full max-h-[95vh] overflow-y-auto shadow-xl border border-slate-200/80">
+        <div className="p-4 sm:p-6 sticky top-0 bg-white border-b border-slate-100">
+          <h2 className="text-xl font-bold text-slate-800">Edit Service</h2>
+        </div>
+        <form onSubmit={handleSubmit} className="p-4 sm:p-6 space-y-4">
           <div>
-            <label className="block text-sm font-medium">Service Name</label>
-            <input name="name" value={form.name} onChange={handleChange} required className="w-full border rounded px-2 py-1" />
+            <label className="block text-sm font-medium text-slate-700 mb-1">Service Name</label>
+            <input
+              name="name"
+              value={form.name}
+              onChange={handleChange}
+              required
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none"
+            />
           </div>
           <div>
-            <label className="block text-sm font-medium">Visiting Price (₹)</label>
-            <input name="visitingPrice" type="number" value={form.visitingPrice} onChange={handleChange} required className="w-full border rounded px-2 py-1" />
+            <label className="block text-sm font-medium text-slate-700 mb-1">Visiting Price (₹)</label>
+            <input
+              name="visitingPrice"
+              type="number"
+              value={form.visitingPrice}
+              onChange={handleChange}
+              required
+              className="w-full border border-slate-200 rounded-xl px-3 py-2 text-slate-800 focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none"
+            />
           </div>
-          
-          {/* Existing Images */}
           <div>
-            <label className="block text-sm font-medium">Existing Images</label>
+            <label className="block text-sm font-medium text-slate-700 mb-1">Existing Images</label>
             <div className="flex gap-2 flex-wrap">
               {existingImages.map((img, idx) => (
-                <div key={img} className="relative">
+                <div key={idx} className="relative">
                   <img
                     src={`${BASE_URL}/uploads/${img}`}
-                    alt={`img${idx}`}
-                    className="w-20 h-16 object-cover border rounded"
+                    alt=""
+                    className="w-20 h-16 object-cover border border-slate-200 rounded-xl"
                   />
-                  <button type="button" onClick={() => handleRemoveExistingImage(idx)}
-                    className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">×</button>
+                  <button
+                    type="button"
+                    onClick={() => handleRemoveExistingImage(idx)}
+                    className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm hover:bg-red-600"
+                  >
+                    ×
+                  </button>
                 </div>
               ))}
-              {existingImages.length === 0 && <span className="text-xs text-gray-500">No images left</span>}
+              {existingImages.length === 0 && <span className="text-xs text-slate-500">No images</span>}
             </div>
           </div>
-          
-          {/* Add New Images */}
           <div>
-            <label className="block text-sm font-medium">Add Images (Max 5)</label>
-            <input type="file" multiple accept="image/*" onChange={handleImageChange} className="block" />
-            {/* Preview new images */}
+            <label className="block text-sm font-medium text-slate-700 mb-1">Add Images (Max 5)</label>
+            <input
+              type="file"
+              multiple
+              accept="image/*"
+              onChange={handleImageChange}
+              className="block w-full text-sm text-slate-600 file:mr-3 file:py-2 file:px-4 file:rounded-xl file:border-0 file:bg-teal-50 file:text-teal-700"
+            />
             {form.images.length > 0 && (
               <div className="flex gap-2 flex-wrap mt-2">
                 {form.images.map((file, idx) => (
                   <div key={idx} className="relative">
-                    <img src={URL.createObjectURL(file)} alt="preview" className="w-20 h-16 object-cover border rounded" />
-                    <button type="button" onClick={() => handleRemoveNewImage(idx)}
-                      className="absolute -top-2 -right-2 bg-red-600 text-white rounded-full w-6 h-6 flex items-center justify-center text-sm">×</button>
+                    <img src={URL.createObjectURL(file)} alt="Preview" className="w-20 h-16 object-cover border rounded-xl" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemoveNewImage(idx)}
+                      className="absolute -top-1.5 -right-1.5 w-6 h-6 rounded-full bg-red-500 text-white flex items-center justify-center text-sm"
+                    >
+                      ×
+                    </button>
                   </div>
                 ))}
               </div>
             )}
           </div>
-
-          {/* Subservices */}
           <div>
             <div className="flex items-center justify-between mb-2">
-              <label className="block text-sm font-medium">Sub-Services</label>
-              <button type="button" onClick={addSubService} className="text-blue-600 hover:underline text-xs">+ Add Sub-Service</button>
+              <label className="block text-sm font-medium text-slate-700">Sub-Services</label>
+              <button type="button" onClick={addSubService} className="text-teal-600 hover:text-teal-700 text-sm font-medium">
+                + Add Sub-Service
+              </button>
             </div>
             {subServices.map((sub, index) => (
-              <div key={index} className="border rounded-lg p-3 mb-3 bg-gray-50">
+              <div key={index} className="border border-slate-200 rounded-xl p-3 mb-3 bg-slate-50/50">
                 <div className="flex items-center justify-between mb-2">
-                  <h4 className="font-medium text-sm">Sub-Service {index + 1}</h4>
+                  <h4 className="font-medium text-sm text-slate-800">Sub-Service {index + 1}</h4>
                   {subServices.length > 1 && (
-                    <button type="button" onClick={() => removeSubService(index)} className="text-red-600 text-xl">×</button>
+                    <button type="button" onClick={() => removeSubService(index)} className="text-red-600 hover:text-red-700 text-xl leading-none">
+                      ×
+                    </button>
                   )}
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-2 mb-2">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-2 mb-2">
                   <input
                     name="name"
                     value={sub.name}
-                    placeholder="Sub-service Name"
+                    placeholder="Name"
                     onChange={(e) => handleSubChange(index, e)}
                     required
-                    className="border rounded px-2 py-1 text-sm"
+                    className="border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none"
                   />
                   <input
                     name="price"
@@ -240,55 +222,43 @@ function EditProductModal({ product, onClose, onSave }) {
                     placeholder="Price"
                     onChange={(e) => handleSubChange(index, e)}
                     required
-                    className="border rounded px-2 py-1 text-sm"
+                    className="border border-slate-200 rounded-lg px-2 py-1.5 text-sm focus:ring-2 focus:ring-teal-500/20 focus:border-teal-500 outline-none"
                   />
                 </div>
                 <div>
-                  <label className="block text-xs font-medium mb-1">Sub-Service Image</label>
+                  <label className="block text-xs font-medium text-slate-600 mb-1">Sub-Service Image</label>
                   <input
                     type="file"
                     accept="image/*"
                     onChange={(e) => handleSubImageChange(index, e)}
                     className="block text-xs"
                   />
-                  
-                  {/* Show existing image */}
                   {sub.existingImage && !sub.imagePreview && (
                     <div className="mt-2 flex items-center gap-2">
-                      <span className="text-xs text-gray-600">Current:</span>
-                      <img 
-                        src={sub.existingImage ? `${BASE_URL}/uploads/${sub.existingImage}` : '/img/default-service.png'} 
-                        alt="Current" 
-                        className="w-16 h-16 object-cover rounded border"
-                        onError={e => { e.target.src = '/img/default-service.png'; }}
+                      <span className="text-xs text-slate-500">Current:</span>
+                      <img
+                        src={`${BASE_URL}/uploads/${sub.existingImage}`}
+                        alt="Current"
+                        className="w-16 h-16 object-cover rounded-lg border"
+                        onError={(e) => (e.target.src = "/img/default-service.png")}
                       />
-                      <button 
-                        type="button" 
-                        onClick={() => handleRemoveSubServiceImage(index)} 
-                        className="text-red-600 text-xs hover:underline"
-                      >
+                      <button type="button" onClick={() => handleRemoveSubServiceImage(index)} className="text-red-600 text-xs hover:underline">
                         Remove
                       </button>
                     </div>
                   )}
-                  
-                  {/* Show new image preview */}
                   {sub.imagePreview && (
                     <div className="mt-2 flex items-center gap-2">
-                      <span className="text-xs text-gray-600">New:</span>
-                      <img 
-                        src={sub.imagePreview} 
-                        alt="Preview" 
-                        className="w-16 h-16 object-cover rounded border"
-                      />
-                      <button 
-                        type="button" 
+                      <span className="text-xs text-slate-500">New:</span>
+                      <img src={sub.imagePreview} alt="Preview" className="w-16 h-16 object-cover rounded-lg border" />
+                      <button
+                        type="button"
                         onClick={() => {
                           const updated = [...subServices];
                           updated[index].image = null;
                           updated[index].imagePreview = null;
                           setSubServices(updated);
-                        }} 
+                        }}
                         className="text-red-600 text-xs hover:underline"
                       >
                         Remove
@@ -299,11 +269,20 @@ function EditProductModal({ product, onClose, onSave }) {
               </div>
             ))}
           </div>
-          
-          {/* Buttons */}
-          <div className="flex items-center gap-2 mt-3">
-            <button type="submit" className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700">Save Changes</button>
-            <button type="button" onClick={onClose} className="ml-2 px-4 py-2 rounded border">Cancel</button>
+          <div className="flex flex-wrap items-center gap-2 pt-2">
+            <button
+              type="submit"
+              className="px-4 py-2 rounded-xl bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors"
+            >
+              Save Changes
+            </button>
+            <button
+              type="button"
+              onClick={onClose}
+              className="px-4 py-2 rounded-xl border border-slate-200 text-slate-700 text-sm font-medium hover:bg-slate-50 transition-colors"
+            >
+              Cancel
+            </button>
           </div>
         </form>
       </div>
@@ -315,12 +294,13 @@ export default function ManageProducts() {
   const [products, setProducts] = useState([]);
   const [isLoading, setIsLoading] = useState(true);
   const [expanded, setExpanded] = useState({});
-  const [editing, setEditing] = useState(null); // product to edit or null
+  const [editing, setEditing] = useState(null);
   const navigate = useNavigate();
 
   const fetchProducts = () => {
     setIsLoading(true);
-    axios.get(`${BASE_URL}/api/products`)
+    axios
+      .get(`${BASE_URL}/api/products`)
       .then((res) => {
         setProducts(res.data);
         setIsLoading(false);
@@ -335,104 +315,103 @@ export default function ManageProducts() {
   const handleDelete = async (id) => {
     if (window.confirm("Are you sure you want to delete this service?")) {
       await axios.delete(`${BASE_URL}/api/products/${id}`);
-      setProducts(products.filter(p => p._id !== id));
+      setProducts(products.filter((p) => p._id !== id));
     }
   };
 
   const toggleSubServices = (productId) => {
-    setExpanded((prev) => ({
-      ...prev,
-      [productId]: !prev[productId],
-    }));
+    setExpanded((prev) => ({ ...prev, [productId]: !prev[productId] }));
   };
 
   return (
-    <div className="lg:ml-64 px-4 sm:px-6 py-6 sm:py-8 mx-auto max-w-7xl">
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between mb-6 sm:mb-8">
-        <div>
-          <h2 className="text-2xl sm:text-3xl font-bold text-gray-800">Manage Services</h2>
-          <p className="text-gray-500 mt-1 sm:mt-2 text-sm sm:text-base">
-            {products.length} {products.length === 1 ? 'service' : 'services'} available
-          </p>
-        </div>
+    <PageLayout
+      icon={FiPackage}
+      title="Manage Services"
+      subtitle={`${products.length} ${products.length === 1 ? "service" : "services"} available`}
+      maxWidth="max-w-7xl"
+      action={
         <button
           onClick={() => navigate("/add-service")}
-          className="mt-3 sm:mt-0 inline-flex items-center px-4 py-2 bg-blue-600 text-white text-sm font-medium rounded hover:bg-blue-700"
+          className="inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors shadow-dashboard-card"
         >
+          <FiPlusCircle size={18} />
           Add New Service
         </button>
-      </div>
-
+      }
+    >
       {isLoading ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-          {[...Array(6)].map((_, i) => (
-            <div key={i} className="bg-white rounded-lg border p-4 animate-pulse">
-              <div className="h-40 bg-gray-200 mb-4"></div>
-              <div className="h-4 bg-gray-200 w-3/4 mb-2"></div>
-              <div className="h-4 bg-gray-200 w-1/2"></div>
-            </div>
-          ))}
-        </div>
+        <>
+          <PageSkeletonHeader />
+          <PageSkeletonCards count={6} />
+        </>
       ) : products.length > 0 ? (
-        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5 animate-slide-up">
           {products.map((product) => (
-            <div key={product._id} className="bg-white border rounded-lg shadow-sm hover:shadow-lg transition duration-300">
+            <div
+              key={product._id}
+              className="bg-dashboard-card rounded-2xl border border-slate-200/80 shadow-dashboard-card overflow-hidden hover:shadow-dashboard-card-hover transition-all duration-300"
+            >
               <div className="relative h-40 sm:h-48 overflow-hidden">
                 <img
-                  src={product.images && product.images[0] ? `${BASE_URL}/uploads/${product.images[0]}` : '/img/default-service.png'}
+                  src={
+                    product.images?.[0]
+                      ? `${BASE_URL}/uploads/${product.images[0]}`
+                      : "/img/default-service.png"
+                  }
                   alt={product.name}
                   className="w-full h-full object-cover"
-                  onError={e => { e.target.src = '/img/default-service.png'; }}
+                  onError={(e) => (e.target.src = "/img/default-service.png")}
                 />
               </div>
-              <div className="p-4">
-                <h3 className="text-lg font-semibold text-gray-800 mb-1 line-clamp-1">{product.name}</h3>
-                <p className="text-sm text-gray-700"><strong>Visiting Price:</strong> ₹{product.visitingPrice}</p>
-                {/* Subservices */}
-                {product.subServices && product.subServices.length > 0 && (
+              <div className="p-4 sm:p-5">
+                <h3 className="text-lg font-semibold text-slate-800 mb-1 line-clamp-1">{product.name}</h3>
+                <p className="text-sm text-slate-600">
+                  <strong>Visiting Price:</strong> ₹{product.visitingPrice}
+                </p>
+                {product.subServices?.length > 0 && (
                   <div className="mt-3">
                     <button
                       onClick={() => toggleSubServices(product._id)}
-                      className="text-blue-600 text-sm hover:underline"
+                      className="inline-flex items-center gap-1 text-teal-600 text-sm font-medium hover:text-teal-700"
                     >
-                      {expanded[product._id] ? 'Hide Sub-Services' : 'Show Sub-Services'}
+                      {expanded[product._id] ? <FiChevronUp size={16} /> : <FiChevronDown size={16} />}
+                      {expanded[product._id] ? "Hide" : "Show"} Sub-Services
                     </button>
                     {expanded[product._id] && (
-                      <ul className="mt-2 text-sm text-gray-800 space-y-2">
+                      <ul className="mt-2 text-sm text-slate-700 space-y-2">
                         {product.subServices.map((sub, idx) => (
                           <li key={idx} className="flex items-center gap-3">
                             <img
-                              src={sub.image ? `${BASE_URL}/uploads/${sub.image}` : '/img/default-service.png'}
+                              src={sub.image ? `${BASE_URL}/uploads/${sub.image}` : "/img/default-service.png"}
                               alt={sub.name}
-                              className="w-10 h-10 object-cover rounded border"
-                              onError={e => { e.target.src = '/img/default-service.png'; }}
+                              className="w-10 h-10 object-cover rounded-lg border border-slate-100"
+                              onError={(e) => (e.target.src = "/img/default-service.png")}
                             />
                             <span className="font-medium">{sub.name}</span>
-                            <span className="text-green-700 font-bold ml-2">₹{sub.price}</span>
+                            <span className="text-emerald-600 font-semibold ml-auto">₹{sub.price}</span>
                           </li>
                         ))}
                       </ul>
                     )}
                   </div>
                 )}
-
-                {/* Footer */}
-                <div className="flex items-center justify-between mt-4 gap-2">
-                  <span className="text-sm text-gray-600">
-                    {product.subServices ? product.subServices.length : 0} sub-services
+                <div className="flex items-center justify-between mt-4 pt-4 border-t border-slate-100 gap-2">
+                  <span className="text-xs text-slate-500">
+                    {product.subServices?.length || 0} sub-services
                   </span>
                   <div className="flex gap-2">
                     <button
                       onClick={() => setEditing(product)}
-                      className="text-white bg-yellow-500 hover:bg-yellow-600 px-3 py-1.5 rounded text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-amber-500 text-white text-sm font-medium hover:bg-amber-600 transition-colors"
                     >
+                      <FiEdit2 size={14} />
                       Edit
                     </button>
                     <button
                       onClick={() => handleDelete(product._id)}
-                      className="text-white bg-red-600 hover:bg-red-700 px-3 py-1.5 rounded text-sm"
+                      className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg bg-red-500 text-white text-sm font-medium hover:bg-red-600 transition-colors"
                     >
+                      <FiTrash2 size={14} />
                       Delete
                     </button>
                   </div>
@@ -442,21 +421,19 @@ export default function ManageProducts() {
           ))}
         </div>
       ) : (
-        <div className="text-center py-12">
-          <h3 className="text-lg font-medium text-gray-900">No services found</h3>
-          <p className="mt-1 text-sm text-gray-500">Get started by adding your first service</p>
-          <div className="mt-4">
-            <button
-              onClick={() => navigate("/add-service")}
-              className="px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700"
-            >
-              Add Service
-            </button>
-          </div>
+        <div className="bg-dashboard-card rounded-2xl border border-slate-200/80 shadow-dashboard-card p-8 sm:p-12 text-center animate-slide-up">
+          <FiPackage className="mx-auto text-slate-300" size={48} />
+          <h3 className="mt-4 text-lg font-semibold text-slate-800">No services found</h3>
+          <p className="mt-1 text-sm text-slate-500">Get started by adding your first service.</p>
+          <button
+            onClick={() => navigate("/add-service")}
+            className="mt-4 px-4 py-2 rounded-xl bg-teal-600 text-white text-sm font-medium hover:bg-teal-700 transition-colors"
+          >
+            Add Service
+          </button>
         </div>
       )}
 
-      {/* Edit Modal */}
       {editing && (
         <EditProductModal
           product={editing}
@@ -467,6 +444,6 @@ export default function ManageProducts() {
           }}
         />
       )}
-    </div>
+    </PageLayout>
   );
 }

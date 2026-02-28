@@ -5,6 +5,7 @@ import ManageOrders from "./pages/ManageOrders";
 import ManageProducts from "./pages/ManageProducts";
 import AddService from "./pages/AddService";
 import Sidebar from "./Components/Sidebar";
+import ScrollProgress from "./Components/ScrollProgress";
 import AdminLogin from "./pages/AdminLogin";
 import EditService from "./pages/EditService";
 
@@ -23,9 +24,10 @@ export default function App() {
           path="/*"
           element={
             <ProtectedRoute>
-              <div className="flex">
+              <ScrollProgress />
+              <div className="flex min-h-screen">
                 <Sidebar />
-                <div className="flex-1">
+                <div className="flex-1 min-h-screen">
                   <Routes>
                     <Route path="dashboard" element={<Dashboard />} />
                     <Route path="products" element={<ManageProducts />} />
