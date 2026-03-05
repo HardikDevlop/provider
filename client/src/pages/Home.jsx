@@ -30,7 +30,7 @@ export default function Home() {
     <div className="min-h-screen dashboard-bg-pattern">
       {/* Hero section */}
       <section className="bg-transparent">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 lg:pb-16">
+        <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 lg:pb-16">
           <div className="grid lg:grid-cols-2 gap-10 lg:gap-14 items-center">
             <div className="space-y-6 animate-slide-up">
               <span className="inline-flex items-center px-3 py-1 rounded-full text-xs font-semibold bg-blue-50 text-blue-700 border border-blue-100">
@@ -80,7 +80,7 @@ export default function Home() {
 
       {/* Why choose us */}
       <section className="bg-white/70 border-y border-slate-100">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
               Why Choose Us?
@@ -111,8 +111,8 @@ export default function Home() {
 
       {/* Services grid */}
       <section className="bg-slate-50/70">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 sm:mb-8">
+      <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 sm:mb-8">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
                 Our Services
@@ -201,7 +201,7 @@ export default function Home() {
 
       {/* How it works */}
       <section className="bg-white">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+        <div className="max-w-8xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
           <div className="text-center mb-8 sm:mb-10">
             <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
               How It Works
@@ -232,7 +232,7 @@ export default function Home() {
 
       {/* Final CTA */}
       <section className="bg-blue-600">
-        <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
           <div className="bg-blue-700/90 rounded-3xl px-6 sm:px-10 py-8 sm:py-10 shadow-dashboard-card text-center sm:text-left flex flex-col sm:flex-row sm:items-center sm:justify-between gap-6">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-white">

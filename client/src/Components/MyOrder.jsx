@@ -19,6 +19,12 @@ export default function MyOrder({
   const tenMinutes = 10 * 60 * 1000;
   const processExpired = now - created > tenMinutes;
 
+  // On mobile we keep the main order card UI only.
+  // Provider / partner status banners are shown on desktop view.
+  if (isMobile) {
+    return null;
+  }
+
   // 1. While searching for partner (first 10 minutes)
   if (
     (order.requestStatus === "Pending" || order.status === "processing") &&

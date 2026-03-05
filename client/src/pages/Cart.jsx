@@ -91,7 +91,6 @@ export default function Cart() {
   const [errors, setErrors] = useState({});
   const [productSubServices, setProductSubServices] = useState({});
   const [isMobile, setIsMobile] = useState(window.innerWidth <= 767);
-  const [suggestions, setSuggestions] = useState([]);
   const navigate = useNavigate();
   const [toastMsg, setToastMsg] = useState("");
   const [showToast, setShowToast] = useState(false);
@@ -123,8 +122,6 @@ export default function Cart() {
   const availableDates = [today, tomorrow, afterTomorrow];
 
   const availableSubRef = useRef();
-  const suggestionsRef = useRef();
-  const scrollByAmount = 300;
 
   useEffect(() => {
     async function fetchSubServices() {
@@ -147,27 +144,6 @@ export default function Cart() {
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
-
-  useEffect(() => {
-    axios.get(`${BASE_URL}/api/products`).then(res => {
-      const cartSubKeys = new Set(
-        cartItems.flatMap(item =>
-          (item.subServices || []).map(sub => (sub._id || sub.name))
-        )
-      );
-      const allSuggestions = res.data
-        .filter(p => !cartItems.some(ci => ci.id === p._id))
-        .flatMap(p =>
-          (p.subServices || []).map(sub => ({
-            ...sub,
-            parentProductId: p._id,
-            parentProductName: p.name
-          }))
-        )
-        .filter(sub => !cartSubKeys.has(sub._id || sub.name));
-      setSuggestions(allSuggestions);
-    });
-  }, [cartItems]);
 
   useEffect(() => {
     if (showConfirmation) {
@@ -659,66 +635,6 @@ export default function Cart() {
             </div>
           </div>
         </div>
-        {suggestions.length > 0 && (
-              <div className="my-8 relative">
-                <h3 className="font-bold text-lg mb-3">You may also like</h3>
-                <button
-                  className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow p-2"
-                  style={{ display: 'block' }}
-                  onClick={() => suggestionsRef.current && suggestionsRef.current.scrollBy({ left: -scrollByAmount, behavior: "smooth" })}
-                  aria-label="Scroll left"
-                >
-                  <FiChevronLeft size={24} />
-                </button>
-                <div
-                  ref={suggestionsRef}
-                  className="flex gap-2 overflow-x-auto whitespace-nowrap pb-2 hide-scrollbar"
-                  style={{ scrollBehavior: 'smooth' }}
-                >
-                  {suggestions.map((sub, idx) => {
-                    // Find if this suggestion is in any cart item's subServices
-                    const cartItem = cartItems.find(item =>
-                      (item.subServices || []).some(
-                        s =>
-                          (s._id && sub._id && s._id === sub._id) ||
-                          (s.name && sub.name && s.name === sub.name)
-                      )
-                    );
-                    const inCart = !!cartItem;
-                    return (
-                      <div
-                        key={sub.parentProductId + '-' + (sub._id || sub.name || idx)}
-                        className={`border rounded-xl p-4 bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col items-center w-48 min-h-[200px] relative cursor-pointer flex-shrink-0 ${inCart ? "ring-2 ring-blue-500 border-blue-500" : "hover:shadow"}`}
-                        onClick={() => {
-                          navigate(`/product/${sub.parentProductId}`);
-                        }}
-                      >
-                        <img
-                          src={sub.image ? `${BASE_URL}/uploads/${sub.image}` : "/default-service.png"}
-                          alt={sub.name || sub.title}
-                          className="w-40 h-24 object-fill mb-2"
-                          onError={e => { e.target.src = "/default-service.png"; }}
-                        />
-                        <div className="font-semibold text-base text-gray-800 mb-1">{sub.name || sub.title}</div>
-                        <div className="flex justify-between items-center w-full mt-1">
-                          <div className="text-green-600 font-bold text-base">₹{sub.price || 0}</div>
-                          <div className="text-xs text-gray-500 mb-2 ml-2">from {sub.parentProductName}</div>
-                        </div>
-                        {/* Remove button is not needed here anymore */}
-                      </div>
-              );
-            })}
-                </div>
-                <button
-                  className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white rounded-full shadow p-2"
-                  style={{ display: 'block' }}
-                  onClick={() => suggestionsRef.current && suggestionsRef.current.scrollBy({ left: scrollByAmount, behavior: "smooth" })}
-                  aria-label="Scroll right"
-                >
-                  <FiChevronRight size={24} />
-                </button>
-          </div>
-            )}
       </div>
 
  {/* Order Confirmation Modal */}

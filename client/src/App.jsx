@@ -22,7 +22,8 @@ import Contact from "./pages/Contact";
 import Pricing from './pages/Pricing';
 import Blog from './pages/Blog';
 import CartBar from "./Components/CartBar";
-import MobileStickyNav from './Components/MobileStickyNav';
+import MobileNav from "./Components/MobileNav";
+import ScrollToTop from "./Components/ScrollToTop";
 import Subservices from './pages/Subservices';
 import { AuthContext } from './context/AuthContext';
 import Payment from './pages/Payment';
@@ -54,6 +55,7 @@ export default function App() {
 
   return (
     <div className="flex flex-col min-h-screen">
+      <ScrollToTop />
       <Navbar />
       <main className="flex-grow">
         <Routes>
@@ -82,7 +84,7 @@ export default function App() {
       </main>
 
       <CartBar />
-      <MobileStickyNav />
+      <MobileNav />
       <Footer />
     </div>
   );

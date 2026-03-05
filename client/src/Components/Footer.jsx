@@ -1,5 +1,4 @@
 import { Link } from "react-router-dom";
-import { useContext } from "react";
 import { 
   FaFacebookF, 
   FaTwitter, 
@@ -10,17 +9,14 @@ import {
   FaHeadset,
   FaRegCopyright
 } from "react-icons/fa";
-import { ThemeContext } from "./Navbar";
 
 export default function Footer() {
-  const { theme } = useContext(ThemeContext);
-  const bgClass = theme === 'dark' ? 'bg-black' : 'bg-white';
-  const textClass = theme === 'dark' ? 'text-white' : 'text-black';
-  const subTextClass = theme === 'dark' ? 'text-white' : 'text-black';
-  const borderClass = theme === 'dark' ? 'border-gray-800' : 'border-gray-200';
-  const linkClass = theme === 'dark' ? 'text-white hover:text-white' : 'text-black hover:text-black';
-  const iconClass = theme === 'dark' ? 'text-white' : 'text-black';
-
+  const bgClass = "bg-white";
+  const textClass = "text-black";
+  const subTextClass = "text-black";
+  const borderClass = "border-gray-200";
+  const linkClass = "text-black hover:text-black";
+  const iconClass = "text-black";
   return (
     <>
       {/* Mobile Footer - Connect With Us */}
@@ -33,21 +29,21 @@ export default function Footer() {
           <div className="flex justify-center space-x-6" style={{ marginBottom: "2rem" }} >
             <Link 
               to="#" 
-              className={`p-3 rounded-full transition-all ${theme === 'dark' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-800 text-white hover:bg-gray-700'}`}
+              className="p-3 rounded-full transition-all bg-gray-800 text-white hover:bg-gray-700"
               aria-label="Facebook"
             >
               <FaFacebookF className={`h-6 w-6 ${iconClass}`} />
             </Link>
             <Link 
               to="#" 
-              className={`p-3 rounded-full transition-all ${theme === 'dark' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-800 text-white hover:bg-gray-700'}`}
+              className="p-3 rounded-full transition-all bg-gray-800 text-white hover:bg-gray-700"
               aria-label="Twitter"
             >
               <FaTwitter className={`h-6 w-6 ${iconClass}`} />
             </Link>
             <Link 
               to="#" 
-              className={`p-3 rounded-full transition-all ${theme === 'dark' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-800 text-white hover:bg-gray-700'}`}
+              className="p-3 rounded-full transition-all bg-gray-800 text-white hover:bg-gray-700"
               aria-label="Instagram"
             >
               <FaInstagram className={`h-6 w-6 ${iconClass}`} />
@@ -55,39 +51,39 @@ export default function Footer() {
           </div>
           <p className={`${subTextClass} text-xs mt-6 flex items-center justify-center`}>
             <FaRegCopyright className={`mr-1 ${iconClass}`} />
-            {new Date().getFullYear()} DAKSH Services. All rights reserved.
+            {new Date().getFullYear()} Service Provider. All rights reserved.
           </p>
         </div>
       </div>
 
       {/* Desktop Footer */}
       <footer className={`hidden md:block ${bgClass} ${textClass} pt-10 pb-6 px-4 sm:px-6`}>
-        <div className="max-w-7xl mx-auto">
+        <div className="max-w-10xl mx-auto">
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             {/* Company Info */}
             <div className="col-span-2 md:col-span-1 space-y-4">
-              <h3 className={`text-2xl font-bold bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-transparent ${textClass}`}>DAKSH</h3>
+              <h3 className={`text-2xl font-bold bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-dark ${textClass}`}>Provider</h3>
               <p className={`${subTextClass} text-sm sm:text-base`}>
                 Premium home services at your doorstep. Quality professionals for all your needs.
               </p>
               <div className="flex space-x-4">
                 <Link 
                   to="#" 
-                  className={`transition-colors p-2 rounded-full ${theme === 'dark' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
+                  className="transition-colors p-2 rounded-full bg-gray-200 text-black hover:bg-gray-300"
                   aria-label="Facebook"
                 >
                   <FaFacebookF className={`h-5 w-5 ${iconClass}`} />
                 </Link>
                 <Link 
                   to="#" 
-                  className={`transition-colors p-2 rounded-full ${theme === 'dark' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
+                  className="transition-colors p-2 rounded-full bg-gray-200 text-black hover:bg-gray-300"
                   aria-label="Twitter"
                 >
                   <FaTwitter className={`h-5 w-5 ${iconClass}`} />
                 </Link>
                 <Link 
                   to="#" 
-                  className={`transition-colors p-2 rounded-full ${theme === 'dark' ? 'bg-black text-white hover:bg-gray-800' : 'bg-gray-200 text-black hover:bg-gray-300'}`}
+                  className="transition-colors p-2 rounded-full bg-gray-200 text-black hover:bg-gray-300"
                   aria-label="Instagram"
                 >
                   <FaInstagram className={`h-5 w-5 ${iconClass}`} />
@@ -186,7 +182,7 @@ export default function Footer() {
             <div className="flex flex-col md:flex-row justify-between items-center gap-4">
               <p className={`${subTextClass} text-xs sm:text-sm flex items-center`}>
                 <FaRegCopyright className={`mr-1 ${iconClass}`} />
-                {new Date().getFullYear()} DAKSH Services. All rights reserved.
+                {new Date().getFullYear()} Service Provider. All rights reserved.
               </p>
               <div className="flex space-x-4 sm:space-x-6">
                 <Link to="#" className={`${linkClass} text-xs sm:text-sm transition-colors`}>

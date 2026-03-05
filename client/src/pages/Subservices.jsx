@@ -94,7 +94,7 @@ export default function Subservices() {
 
   return (
     <div className="mx-auto py-8 px-4 sm:px-6 lg:px-8 min-h-screen bg-white text-gray-800">
-      <div className="max-w-7xl mx-auto">
+      <div className="max-w-10xl mx-auto">
         {/* Service name and Back button in a single row */}
         <div className="flex items-center justify-between mb-8">
           <h1 className="text-3xl font-bold text-gray-800">

@@ -47,10 +47,10 @@ const plans = [
 export default function Pricing() {
   return (
     <div className="min-h-screen bg-gray-50 text-gray-900 p-8">
-      <div className="max-w-6xl mx-auto">
+      <div className="max-w-10xl mx-auto">
         <h1 className="text-4xl md:text-5xl font-bold text-center mb-4">
           Upgrade Your Plan –{" "}
-          <span className="text-yellow-400">Daksh Membership</span>
+          <span className="text-yellow-400">Providers Membership</span>
         </h1>
         <p className="text-center text-gray-600 mb-12 max-w-2xl mx-auto">
           Choose the perfect plan that fits your needs and get access to premium

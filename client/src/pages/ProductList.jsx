@@ -68,7 +68,7 @@ export default function ProductList() {
 
   return (
     <div className="min-h-screen dashboard-bg-pattern">
-      <div className="max-w-6xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
+      <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-12">
         {/* Header */}
         <header className="text-center mb-8 sm:mb-10">
           <h1 className="text-3xl sm:text-4xl font-bold text-slate-900">

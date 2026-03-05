@@ -3,10 +3,6 @@ import { useEffect, useState, useContext } from "react";
 import axios from "axios";
 import { CartContext } from "../context/CartContext";
 import { AuthContext } from "../context/AuthContext";
-import { Swiper, SwiperSlide } from 'swiper/react';
-import { Navigation } from 'swiper/modules';
-import 'swiper/css';
-import 'swiper/css/navigation';
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
 export default function ProductDetails() {
@@ -24,7 +20,6 @@ export default function ProductDetails() {
   const [totalPrice, setTotalPrice] = useState(0);
   const [subServiceToAdd, setSubServiceToAdd] = useState("");
   const [showFullDescription, setShowFullDescription] = useState(false);
-  const [suggestions, setSuggestions] = useState([]);
 
   useEffect(() => {
     axios
@@ -45,21 +40,6 @@ export default function ProductDetails() {
       setTotalPrice(product.visitingPrice + extra);
     }
   }, [selectedSubServices, product]);
-
-  useEffect(() => {
-    axios.get(`${BASE_URL}/api/products`).then(res => {
-      const allSuggestions = res.data
-        .filter(p => p._id !== product?._id)
-        .flatMap(p =>
-          (p.subServices || []).map(sub => ({
-            ...sub,
-            parentProductId: p._id,
-            parentProductName: p.name
-          }))
-        );
-      setSuggestions(allSuggestions);
-    });
-  }, [product]);
 
   const handleAddSubService = () => {
     if (!subServiceToAdd) return;
@@ -273,47 +253,6 @@ export default function ProductDetails() {
           </div>
 
         </div>
-        {suggestions.length > 0 && (
-          <div className="w-full relative left-1/2 right-1/2 -translate-x-1/2 px-0 mb-8">
-            <h3 className="font-semibold text-lg mb-3 px-8">You may also like</h3>
-            <Swiper
-              modules={[Navigation]}
-              spaceBetween={8} // or try 4, 8, 12 for tighter spacing
-              slidesPerView={4}
-              navigation
-              loop={true}
-              speed={600}
-              style={{ padding: '1rem 0' }}
-            >
-              {suggestions.map((sub, idx) => {
-                return (
-                  <SwiperSlide
-                    key={sub.parentProductId + '-' + (sub._id || sub.name || idx)}
-                  >
-                    <div
-                      className={`border rounded-xl p-4 bg-white hover:shadow-lg transition-shadow duration-300 flex flex-col items-center w-48 min-h-[220px] relative cursor-pointer`}
-                      onClick={() => {
-                        navigate(`/product/${sub.parentProductId}`);
-                      }}
-                    >
-                      <img
-                        src={sub.image ? `${BASE_URL}/uploads/${sub.image}` : "/default-service.png"}
-                        alt={sub.name || sub.title}
-                        className="w-30 h-24 object-cover rounded-lg mb-2"
-                        onError={e => { e.target.src = "/default-service.png"; }}
-                      />
-                      <div className="font-semibold text-base text-gray-800 mb-1">{sub.name || sub.title}</div>
-                      <div className="flex justify-between items-center w-full mt-1">
-                        <div>₹{sub.price || 0}</div>
-                        <div className="text-xs text-gray-500 mb-2">from {sub.parentProductName}</div>
-                      </div>
-                    </div>
-                  </SwiperSlide>
-                );
-              })}
-            </Swiper>
-          </div>
-        )}
         {/* Mobile Layout */}
         <div className="md:hidden">
           {/* Mobile Image Gallery */}
