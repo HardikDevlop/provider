@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiShield, FiClock, FiHeadphones, FiArrowRight } from "react-icons/fi";
 import axios from "axios";
+import GlassCard from "../Components/GlassCard";
+import CTASection from "../Components/CTASection";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL;
 
@@ -27,7 +29,7 @@ export default function Home() {
   const topServices = products.slice(0, 8);
 
   return (
-    <div className="min-h-screen dashboard-bg-pattern">
+    <GlassCard className="min-h-screen dashboard-bg-pattern">
       {/* Hero section */}
       <section className="bg-transparent">
         <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 pt-20 pb-12 lg:pb-16">
@@ -111,8 +113,8 @@ export default function Home() {
 
       {/* Services grid */}
       <section className="bg-slate-50/70">
-      <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 sm:mb-8">
+        <div className="max-w-10xl mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14">
+          <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-3 mb-6 sm:mb-8">
             <div>
               <h2 className="text-2xl sm:text-3xl font-bold text-slate-900">
                 Our Services
@@ -198,6 +200,7 @@ export default function Home() {
           )}
         </div>
       </section>
+      <CTASection />
 
       {/* How it works */}
       <section className="bg-white">
@@ -259,7 +262,7 @@ export default function Home() {
           </div>
         </div>
       </section>
-    </div>
+    </GlassCard>
   );
 }
 
