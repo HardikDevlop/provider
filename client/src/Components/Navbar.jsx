@@ -76,7 +76,7 @@ export default function Navbar() {
               to="/"
               className="text-2xl font-bold text-slate-900 hover:text-blue-700 transition-colors"
             >
-              Provider
+              DDS Online
             </Link>
 
             {/* Desktop Navigation */}

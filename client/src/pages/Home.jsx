@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { FiShield, FiClock, FiHeadphones, FiArrowRight } from "react-icons/fi";
+import { FaWhatsapp } from "react-icons/fa";
 import axios from "axios";
 import GlassCard from "../Components/GlassCard";
 import CTASection from "../Components/CTASection";
@@ -62,6 +63,15 @@ export default function Home() {
                   className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-white text-slate-800 text-sm font-medium border border-slate-200 hover:border-slate-300 shadow-sm transition-colors"
                 >
                   Call Now
+                </a>
+                <a
+                  href="https://wa.me/919999999999"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="inline-flex items-center justify-center px-4 py-2.5 rounded-xl bg-emerald-500 text-white text-sm font-medium shadow-sm hover:bg-emerald-600 transition-colors"
+                >
+                  <FaWhatsapp className="mr-2" size={18} />
+                  WhatsApp
                 </a>
               </div>
               <p className="text-xs sm:text-sm text-slate-500">

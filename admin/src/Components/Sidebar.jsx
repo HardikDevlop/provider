@@ -44,76 +44,84 @@ export default function Sidebar() {
 
   return (
     <>
-      {/* Mobile menu trigger */}
       <button
         onClick={toggleMobileMenu}
-        className="md:hidden fixed top-4 left-4 z-50 flex items-center justify-center w-10 h-10 rounded-xl bg-sidebar text-white shadow-lg shadow-black/20"
+        className="md:hidden fixed top-4 left-4 z-50 flex items-center justify-center w-10 h-10 rounded-2xl bg-slate-900/90 text-white shadow-lg shadow-black/40 border border-white/10 backdrop-blur"
         aria-label={isMobileMenuOpen ? "Close menu" : "Open menu"}
       >
         {isMobileMenuOpen ? <FiX size={20} /> : <FiMenu size={20} />}
       </button>
 
-      {/* Overlay */}
       {isMobileMenuOpen && (
         <div
-          className="fixed inset-0 bg-slate-900/60 backdrop-blur-sm z-30 md:hidden animate-fade-in"
+          className="fixed inset-0 bg-slate-950/70 backdrop-blur-sm z-30 md:hidden animate-fade-in"
           onClick={toggleMobileMenu}
           aria-hidden="true"
         />
       )}
 
-      {/* Sidebar - sticky (fixed) so it stays in place on scroll */}
       <aside
         className={`sidebar-sticky
-          flex flex-col bg-sidebar text-white z-40
-          shadow-sidebar-inner transition-[width] duration-300 ease-out
-          ${isCollapsed ? "w-[72px]" : "w-64"}
+          flex flex-col z-40
+          bg-gradient-to-b from-slate-950 via-slate-900 to-slate-950
+          border-r border-white/5 shadow-2xl shadow-black/50
+          transition-all duration-300 ease-out
+          ${isCollapsed ? "w-[76px]" : "w-64"}
           ${isMobileMenuOpen ? "translate-x-0" : "-translate-x-full md:translate-x-0"}
         `}
       >
-        {/* Collapse toggle — desktop only */}
-        <button
+        <div
+          className="flex h-20 shrink-0 items-center px-4 border-b border-white/5 cursor-pointer select-none group"
           onClick={toggleCollapse}
-          className="hidden md:flex absolute -right-3 top-7 w-6 h-6 items-center justify-center rounded-full bg-slate-600 text-slate-300 hover:bg-slate-500 hover:text-white border-2 border-sidebar transition-colors z-10"
           aria-label={isCollapsed ? "Expand sidebar" : "Collapse sidebar"}
         >
-          {isCollapsed ? <FiChevronRight size={12} /> : <FiChevronLeft size={12} />}
-        </button>
-
-        {/* Brand */}
-        <div className="flex h-16 shrink-0 items-center px-4 border-b border-white/5">
           <div className="flex items-center gap-3 min-w-0">
-            <div className="flex shrink-0 w-9 h-9 rounded-lg bg-sidebar-accent/20 flex items-center justify-center">
-              <FiBarChart2 className="text-sidebar-accent" size={20} />
+            <div className="flex shrink-0 w-10 h-10 rounded-2xl bg-gradient-to-tr from-blue-500 via-cyan-400 to-emerald-400 flex items-center justify-center shadow-lg shadow-blue-500/40">
+              <FiBarChart2 className="text-slate-950" size={22} />
             </div>
             <span
-              className={`font-semibold text-slate-100 truncate transition-opacity ${
+              className={`flex flex-col transition-all origin-left ${
                 isCollapsed ? "opacity-0 w-0 overflow-hidden" : "opacity-100"
               }`}
             >
-              Daksh Admin
+              <span className="font-semibold text-slate-50 text-sm tracking-wide group-hover:text-white">
+                DDS Admin Panel
+              </span>
+              <span className="text-[11px] text-slate-400">
+                Manage services & analytics
+              </span>
+            </span>
+            <span className="ml-auto hidden md:flex items-center justify-center rounded-full border border-slate-700/70 bg-slate-900/60 text-slate-400 group-hover:text-slate-100 group-hover:border-slate-500/80 transition-colors w-7 h-7">
+              {isCollapsed ? <FiChevronRight size={12} /> : <FiChevronLeft size={12} />}
             </span>
           </div>
         </div>
 
-        {/* Nav */}
-        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-1">
-          {navItems.map(({ to, icon: Icon, label }) => (
-            <NavLink
-              key={to}
-              to={to}
-              className={navLinkClass}
-              onClick={() => isMobileMenuOpen && toggleMobileMenu()}
-            >
-              <Icon size={20} className="shrink-0" />
-              {!isCollapsed && <span className="truncate">{label}</span>}
-            </NavLink>
-          ))}
+        <nav className="flex-1 overflow-y-auto py-4 px-3 space-y-4">
+          {!isCollapsed && (
+            <p className="px-1 text-[11px] font-semibold tracking-[0.18em] text-slate-500 uppercase">
+              Navigation
+            </p>
+          )}
 
-          <div className="pt-2">
+          <div className="space-y-1">
+            {navItems.map(({ to, icon: Icon, label }) => (
+              <NavLink
+                key={to}
+                to={to}
+                className={navLinkClass}
+                onClick={() => isMobileMenuOpen && toggleMobileMenu()}
+              >
+                <Icon size={20} className="shrink-0" />
+                {!isCollapsed && <span className="truncate">{label}</span>}
+              </NavLink>
+            ))}
+          </div>
+
+          <div className="mt-6 border-t border-white/5 pt-4">
             <button
               onClick={handleLogout}
-              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 ${isCollapsed ? "justify-center" : ""}`}
+              className={`w-full flex items-center gap-3 px-3 py-2.5 rounded-xl text-sm font-medium text-red-400/90 hover:bg-red-500/10 hover:text-red-300 transition-all duration-200 ${isCollapsed ? "justify-center" : ""}`}
             >
               <FiLogOut size={20} className="shrink-0" />
               {!isCollapsed && <span>Logout</span>}
@@ -121,12 +129,13 @@ export default function Sidebar() {
           </div>
         </nav>
 
-        {/* Footer */}
-        {!isCollapsed && (
-          <div className="shrink-0 px-4 py-3 border-t border-white/5">
-            <p className="text-xs text-slate-500">v1.0.0</p>
-          </div>
-        )}
+        <div
+          className={`shrink-0 px-4 py-3 border-t border-white/5 transition-all duration-200 ${
+            isCollapsed ? "opacity-0 h-0 overflow-hidden" : "opacity-100 h-auto"
+          }`}
+        >
+          <p className="text-xs text-slate-500">DDS Admin · v1.0.0</p>
+        </div>
       </aside>
     </>
   );

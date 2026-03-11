@@ -62,7 +62,7 @@ export default function Footer() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-8 mb-8">
             {/* Company Info */}
             <div className="col-span-2 md:col-span-1 space-y-4">
-              <h3 className={`text-2xl font-bold bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-dark ${textClass}`}>Provider</h3>
+              <h3 className={`text-2xl font-bold bg-gradient-to-r from-gray-400 to-gray-600 bg-clip-text text-dark ${textClass}`}>DDS Online</h3>
               <p className={`${subTextClass} text-sm sm:text-base`}>
                 Premium home services at your doorstep. Quality professionals for all your needs.
               </p>
