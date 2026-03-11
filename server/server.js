@@ -37,7 +37,7 @@ const allowedOrigins = [
   'https://provider-snbb.onrender.com',
   // 'https://daksh-client.onrender.com',
   // 'https://daksh-admin.onrender.com',
-  'https://ddsonline.in',
+  // 'https://ddsonline.in',
   // 'https://admindds.ddsonline.in',
   // 'https://callcentrepanel.ddsonline.in',
 ];
