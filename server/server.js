@@ -35,6 +35,7 @@ const allowedOrigins = [
   'http://localhost:5175',
   'https://admin-mmo0.onrender.com',
   'https://provider-snbb.onrender.com',
+  'https://client-d5uz.onrender.com',
   // 'https://daksh-client.onrender.com',
   // 'https://daksh-admin.onrender.com',
   // 'https://ddsonline.in',
