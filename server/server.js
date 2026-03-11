@@ -5,7 +5,6 @@ import mongoose from "mongoose";
 import { fileURLToPath } from "url";
 import path from "path";
 import connectDB from './utils/connectDB.js';
-
 import authRoutes from './routes/authRoutes.js';
 import cartRoutes from './routes/cartRoutes.js';
 import userRoutes from './routes/userRoutes.js';
@@ -22,7 +21,6 @@ dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 8080;
-const HOST = process.env.HOST || 'localhost';
 
 // For ES modules __dirname workaround
 const __filename = fileURLToPath(import.meta.url);
@@ -84,6 +82,8 @@ app.get('/', (req, res) => {
 });
 
 // ✅ Start server
-app.listen(PORT, `${HOST}:${PORT}`, () => {
-  console.log(`Server running on http://${HOST}:${PORT}`);
+// On platforms like Render, you must listen on the PORT they provide
+// and bind to 0.0.0.0 (default when hostname is omitted).
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`);
 });
