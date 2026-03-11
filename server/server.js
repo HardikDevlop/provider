@@ -84,6 +84,6 @@ app.get('/', (req, res) => {
 });
 
 // ✅ Start server
-app.listen(PORT, HOST, () => {
+app.listen(PORT, `${HOST}:${PORT}`, () => {
   console.log(`Server running on http://${HOST}:${PORT}`);
 });
